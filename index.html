@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_aba3e07f006a731513586a92884dda9d {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+    <script src="https://cdn.jsdelivr.net/gh/python-visualization/folium@main/folium/templates/leaflet_heat.min.js"></script>
+</head>
+<body>
+    
+    
+<div style="
+position: fixed;
+bottom: 40px; left: 40px; width: 300px; z-index:9999;
+background: white; border:1px solid #cbd5e1; border-radius:8px;
+padding:12px; font-size:14px; box-shadow: 0 2px 8px rgba(0,0,0,0.10);">
+<b>Карта заполняемости</b><br>
+Тепловой слой = средняя заполняемость<br>
+Точка = объект, в tooltip есть цена<br><br>
+<b>Цвет точки:</b><br>
+<span style="color:#4f9d69;">●</span> 85%+<br>
+<span style="color:#8fcf8f;">●</span> 70–84%<br>
+<span style="color:#e5cf7a;">●</span> 50–69%<br>
+<span style="color:#d98b8b;">●</span> ниже 50%<br><br>
+<b>Светлый маркер</b> = предлагаемое помещение
+</div>
+    
+            <div class="folium-map" id="map_aba3e07f006a731513586a92884dda9d" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_aba3e07f006a731513586a92884dda9d = L.map(
+                "map_aba3e07f006a731513586a92884dda9d",
+                {
+                    center: [59.93359775000001, 30.306019250000002],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_aba3e07f006a731513586a92884dda9d);
+
+            
+
+        
+    
+            var tile_layer_508fe85a4c268148648b0661ff9f79b6 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_508fe85a4c268148648b0661ff9f79b6.addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+            var heat_map_450356f58d81326780229be65cc8020c = L.heatLayer(
+                [[59.933708, 30.303525, 0.778], [59.9315, 30.3024, 0.7140000000000001], [59.935453, 30.311062, 0.25], [59.93315, 30.2996, 0.833], [59.938797, 30.319902, 1.0], [59.93425, 30.31705, 0.778], [59.9323, 30.303, 0.303], [59.931765, 30.304442, 1.0], [59.9292, 30.2979, 0.75], [59.9321, 30.3043, 0.28600000000000003], [59.93595, 30.31155, 0.857], [59.935, 30.2975, 0.375]],
+                {
+  "minOpacity": 0.22,
+  "maxZoom": 18,
+  "radius": 28,
+  "blur": 24,
+  "gradient": {
+  0.0: "#cf8b8b",
+  0.49: "#d98b8b",
+  0.5: "#e5cf7a",
+  0.69: "#e5cf7a",
+  0.7: "#8fcf8f",
+  0.84: "#8fcf8f",
+  0.85: "#4f9d69",
+  1.0: "#4f9d69",
+},
+}
+            );
+        
+    
+            heat_map_450356f58d81326780229be65cc8020c.addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+            var circle_marker_65ff008f54543c73206c3fd957e9a6f1 = L.circleMarker(
+                [59.933708, 30.303525],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8fcf8f", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_f846ebcaea8434c90e6438b7008eafab = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_6b3b4a5b8d0442175332d8b6580111d0 = $(`<div id="html_6b3b4a5b8d0442175332d8b6580111d0" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Исаакиевский</b><br>         ул. Якубовича, 2<br><br>         <b>Руб./сутки:</b> 2-5 тыся (завист от номера)<br>         <b>Формат:</b> апрт-отель, 2 звезды<br>         <b>Номерной фонд:</b> 9<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 77.8%<br>         — Вс 29.03: 77.8%<br>         — Пн 30.03: 77.8%<br>         <b>Средняя:</b> 77.8%     </div>     </div>`)[0];
+                popup_f846ebcaea8434c90e6438b7008eafab.setContent(html_6b3b4a5b8d0442175332d8b6580111d0);
+            
+        
+
+        circle_marker_65ff008f54543c73206c3fd957e9a6f1.bindPopup(popup_f846ebcaea8434c90e6438b7008eafab)
+        ;
+
+        
+    
+    
+            circle_marker_65ff008f54543c73206c3fd957e9a6f1.bindTooltip(
+                `<div>
+                     Исаакиевский • 2-5 тыся (завист от номера) ₽/сутки • 77.8%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_24afe28e1e4bb419927d089ba57617b1 = L.circleMarker(
+                [59.9315, 30.3024],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8fcf8f", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_00a0ba7be67d971ecbee729acf321463 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_9ae653af4e83c2453eacd3195ce1418f = $(`<div id="html_9ae653af4e83c2453eacd3195ce1418f" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>БМ55</b><br>         Почтамтский переулок, 7<br><br>         <b>Руб./сутки:</b> 6500 - 7000 тысяч<br>         <b>Формат:</b> Апарт-отель<br>         <b>Номерной фонд:</b> 7<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 71.4%<br>         — Вс 29.03: 71.4%<br>         — Пн 30.03: 71.4%<br>         <b>Средняя:</b> 71.4%     </div>     </div>`)[0];
+                popup_00a0ba7be67d971ecbee729acf321463.setContent(html_9ae653af4e83c2453eacd3195ce1418f);
+            
+        
+
+        circle_marker_24afe28e1e4bb419927d089ba57617b1.bindPopup(popup_00a0ba7be67d971ecbee729acf321463)
+        ;
+
+        
+    
+    
+            circle_marker_24afe28e1e4bb419927d089ba57617b1.bindTooltip(
+                `<div>
+                     БМ55 • 6500 - 7000 тысяч ₽/сутки • 71.4%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_bd02064bbbc9f76548cb4cc749a482e8 = L.circleMarker(
+                [59.935453, 30.311062],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d98b8b", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_7b50ce72a4bab76f40ece8916386a364 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_57c01037c80152b8b895edc0ce587299 = $(`<div id="html_57c01037c80152b8b895edc0ce587299" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Имидж</b><br>         Гороховая улица, 5<br><br>         <b>Руб./сутки:</b> 3 000–4 500<br>         <b>Формат:</b> Апарт-отель<br>         <b>Номерной фонд:</b> 8<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 25.0%<br>         — Вс 29.03: 25.0%<br>         — Пн 30.03: 25.0%<br>         <b>Средняя:</b> 25.0%     </div>     </div>`)[0];
+                popup_7b50ce72a4bab76f40ece8916386a364.setContent(html_57c01037c80152b8b895edc0ce587299);
+            
+        
+
+        circle_marker_bd02064bbbc9f76548cb4cc749a482e8.bindPopup(popup_7b50ce72a4bab76f40ece8916386a364)
+        ;
+
+        
+    
+    
+            circle_marker_bd02064bbbc9f76548cb4cc749a482e8.bindTooltip(
+                `<div>
+                     Имидж • 3 000–4 500 ₽/сутки • 25.0%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_b89d54e9a2a453e3ea72e0b224bf993b = L.circleMarker(
+                [59.93315, 30.2996],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8fcf8f", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_26aea8e240464b62dd4d62af3e7ff921 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_396f5fb8c952d4feacf1f1d59902704c = $(`<div id="html_396f5fb8c952d4feacf1f1d59902704c" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>КАМАРА apartments</b><br>         ул. Якубовича, д. 5<br><br>         <b>Руб./сутки:</b> 2 500–3 100<br>         <b>Формат:</b> Апарт-отель<br>         <b>Номерной фонд:</b> 6<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 83.3%<br>         — Вс 29.03: 83.3%<br>         — Пн 30.03: 83.3%<br>         <b>Средняя:</b> 83.3%     </div>     </div>`)[0];
+                popup_26aea8e240464b62dd4d62af3e7ff921.setContent(html_396f5fb8c952d4feacf1f1d59902704c);
+            
+        
+
+        circle_marker_b89d54e9a2a453e3ea72e0b224bf993b.bindPopup(popup_26aea8e240464b62dd4d62af3e7ff921)
+        ;
+
+        
+    
+    
+            circle_marker_b89d54e9a2a453e3ea72e0b224bf993b.bindTooltip(
+                `<div>
+                     КАМАРА apartments • 2 500–3 100 ₽/сутки • 83.3%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_be845204d492761dd28e66d679601b61 = L.circleMarker(
+                [59.938797, 30.319902],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4f9d69", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_083061766f80820d5aea9f05faae494c = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_a2d5e6cd30076edc449ef422c9802163 = $(`<div id="html_a2d5e6cd30076edc449ef422c9802163" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>М28</b><br>         Набережная реки Мойки, 28<br><br>         <b>Руб./сутки:</b> 5 000–5 500<br>         <b>Формат:</b> Апарт-отель<br>         <b>Номерной фонд:</b> 2<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 100.0%<br>         — Вс 29.03: 100.0%<br>         — Пн 30.03: 100.0%<br>         <b>Средняя:</b> 100.0%     </div>     </div>`)[0];
+                popup_083061766f80820d5aea9f05faae494c.setContent(html_a2d5e6cd30076edc449ef422c9802163);
+            
+        
+
+        circle_marker_be845204d492761dd28e66d679601b61.bindPopup(popup_083061766f80820d5aea9f05faae494c)
+        ;
+
+        
+    
+    
+            circle_marker_be845204d492761dd28e66d679601b61.bindTooltip(
+                `<div>
+                     М28 • 5 000–5 500 ₽/сутки • 100.0%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_828f5019eabbb676ab1537727c7ac102 = L.circleMarker(
+                [59.93425, 30.31705],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8fcf8f", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_3ebda240eecbaccc5fbf65ab767bdc72 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_840ecea655f52110e7f6fc9fcaa76ccc = $(`<div id="html_840ecea655f52110e7f6fc9fcaa76ccc" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Бон Апапрт</b><br>         Казанская улица, 26<br><br>         <b>Руб./сутки:</b> 4 200<br>         <b>Формат:</b> Апарт-отель<br>         <b>Номерной фонд:</b> 9<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 66.7%<br>         — Вс 29.03: 66.7%<br>         — Пн 30.03: 100.0%<br>         <b>Средняя:</b> 77.8%     </div>     </div>`)[0];
+                popup_3ebda240eecbaccc5fbf65ab767bdc72.setContent(html_840ecea655f52110e7f6fc9fcaa76ccc);
+            
+        
+
+        circle_marker_828f5019eabbb676ab1537727c7ac102.bindPopup(popup_3ebda240eecbaccc5fbf65ab767bdc72)
+        ;
+
+        
+    
+    
+            circle_marker_828f5019eabbb676ab1537727c7ac102.bindTooltip(
+                `<div>
+                     Бон Апапрт • 4 200 ₽/сутки • 77.8%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_8a2c4174af33266ca2f13fe2610a095c = L.circleMarker(
+                [59.9323, 30.303],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d98b8b", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_202d04a7708fe26096229b1bef85a451 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_ee6e2d00014273ff921994422babefb1 = $(`<div id="html_ee6e2d00014273ff921994422babefb1" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Piter-loft</b><br>         Почтамтская улица, 10<br><br>         <b>Руб./сутки:</b> В общей зоне есть кухня оборудованная всем необходимым. Кухня на каждом этаже<br>         <b>Формат:</b> мини-отель<br>         <b>Номерной фонд:</b> 11<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 27.3%<br>         — Вс 29.03: 27.3%<br>         — Пн 30.03: 36.4%<br>         <b>Средняя:</b> 30.3%     </div>     </div>`)[0];
+                popup_202d04a7708fe26096229b1bef85a451.setContent(html_ee6e2d00014273ff921994422babefb1);
+            
+        
+
+        circle_marker_8a2c4174af33266ca2f13fe2610a095c.bindPopup(popup_202d04a7708fe26096229b1bef85a451)
+        ;
+
+        
+    
+    
+            circle_marker_8a2c4174af33266ca2f13fe2610a095c.bindTooltip(
+                `<div>
+                     Piter-loft • В общей зоне есть кухня оборудованная всем необходимым. Кухня на каждом этаже ₽/сутки • 30.3%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_1f89159b2cb89d5f78c12d5bd809872d = L.circleMarker(
+                [59.931765, 30.304442],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4f9d69", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_c5d173bafbdca302509b4d428a371215 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_75971d0cc4e653eac09bcc8640b2845e = $(`<div id="html_75971d0cc4e653eac09bcc8640b2845e" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Исакиевский Лофт</b><br>         Большая Морская улица, 49 лит А2-Н помещение<br><br>         <b>Руб./сутки:</b> 4 500<br>         <b>Формат:</b> мини-отель<br>         <b>Номерной фонд:</b> 4<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 100.0%<br>         — Вс 29.03: 100.0%<br>         — Пн 30.03: 100.0%<br>         <b>Средняя:</b> 100.0%     </div>     </div>`)[0];
+                popup_c5d173bafbdca302509b4d428a371215.setContent(html_75971d0cc4e653eac09bcc8640b2845e);
+            
+        
+
+        circle_marker_1f89159b2cb89d5f78c12d5bd809872d.bindPopup(popup_c5d173bafbdca302509b4d428a371215)
+        ;
+
+        
+    
+    
+            circle_marker_1f89159b2cb89d5f78c12d5bd809872d.bindTooltip(
+                `<div>
+                     Исакиевский Лофт • 4 500 ₽/сутки • 100.0%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_18dfe4d71a8a6a3fe36495010277ebc6 = L.circleMarker(
+                [59.9292, 30.2979],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#8fcf8f", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_74a85c34ff1dc1e84428555dfc223ba8 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_3e699ca123d6685e624cf00926bb65f4 = $(`<div id="html_3e699ca123d6685e624cf00926bb65f4" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Исакиевский Лофт</b><br>         Санкт-Петербург, улица Якубовича 22<br><br>         <b>Руб./сутки:</b> 3 790<br>         <b>Формат:</b> мини-отель<br>         <b>Номерной фонд:</b> 4<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 75.0%<br>         — Вс 29.03: 75.0%<br>         — Пн 30.03: 75.0%<br>         <b>Средняя:</b> 75.0%     </div>     </div>`)[0];
+                popup_74a85c34ff1dc1e84428555dfc223ba8.setContent(html_3e699ca123d6685e624cf00926bb65f4);
+            
+        
+
+        circle_marker_18dfe4d71a8a6a3fe36495010277ebc6.bindPopup(popup_74a85c34ff1dc1e84428555dfc223ba8)
+        ;
+
+        
+    
+    
+            circle_marker_18dfe4d71a8a6a3fe36495010277ebc6.bindTooltip(
+                `<div>
+                     Исакиевский Лофт • 3 790 ₽/сутки • 75.0%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_675dd85e17d35d475d179d1b73a38666 = L.circleMarker(
+                [59.9321, 30.3043],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d98b8b", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_d9a61e55336cd0c88b64a2c1258fa7e7 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_59f39f9c2675e6414a52c83ef1ac096b = $(`<div id="html_59f39f9c2675e6414a52c83ef1ac096b" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Почтамт</b><br>         ул. Почтамтская д.12 лит. А, пом. 7-Н<br><br>         <b>Руб./сутки:</b> 4 500–6 800<br>         <b>Формат:</b> мини-отель<br>         <b>Номерной фонд:</b> 7<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 28.6%<br>         — Вс 29.03: 28.6%<br>         — Пн 30.03: 28.6%<br>         <b>Средняя:</b> 28.6%     </div>     </div>`)[0];
+                popup_d9a61e55336cd0c88b64a2c1258fa7e7.setContent(html_59f39f9c2675e6414a52c83ef1ac096b);
+            
+        
+
+        circle_marker_675dd85e17d35d475d179d1b73a38666.bindPopup(popup_d9a61e55336cd0c88b64a2c1258fa7e7)
+        ;
+
+        
+    
+    
+            circle_marker_675dd85e17d35d475d179d1b73a38666.bindTooltip(
+                `<div>
+                     Почтамт • 4 500–6 800 ₽/сутки • 28.6%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_691d5b732a4749ccf6aba2312958e78e = L.circleMarker(
+                [59.93595, 30.31155],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4f9d69", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_9726d1fdc0a916a52b96b9b49ac7ef82 = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_6a6b7234641a6b502675b8c9143ee56e = $(`<div id="html_6a6b7234641a6b502675b8c9143ee56e" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Соло Прима</b><br>         ул. Гороховая д.3<br><br>         <b>Руб./сутки:</b> 4 400<br>         <b>Формат:</b> мини-отель<br>         <b>Номерной фонд:</b> 7<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 85.7%<br>         — Вс 29.03: 85.7%<br>         — Пн 30.03: 85.7%<br>         <b>Средняя:</b> 85.7%     </div>     </div>`)[0];
+                popup_9726d1fdc0a916a52b96b9b49ac7ef82.setContent(html_6a6b7234641a6b502675b8c9143ee56e);
+            
+        
+
+        circle_marker_691d5b732a4749ccf6aba2312958e78e.bindPopup(popup_9726d1fdc0a916a52b96b9b49ac7ef82)
+        ;
+
+        
+    
+    
+            circle_marker_691d5b732a4749ccf6aba2312958e78e.bindTooltip(
+                `<div>
+                     Соло Прима • 4 400 ₽/сутки • 85.7%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var circle_marker_a35a24e2aa80a3e35a6bcd25a03307df = L.circleMarker(
+                [59.935, 30.2975],
+                {"bubblingMouseEvents": true, "color": "#6b7280", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#d98b8b", "fillOpacity": 0.9, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 0.45, "radius": 8, "stroke": true, "weight": 1}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+        var popup_fde57638a73a3dbd632a253fc2c2d1de = L.popup({
+  "maxWidth": 320,
+});
+
+        
+            
+                var html_0078651b7440b358a1c8461304935831 = $(`<div id="html_0078651b7440b358a1c8461304935831" style="width: 100.0%; height: 100.0%;">     <div style="width:290px">         <b>Loft&Home Apartments</b><br>         Галерная улица, 23<br><br>         <b>Руб./сутки:</b> 4 600–7 000<br>         <b>Формат:</b> Апарт-отель<br>         <b>Номерной фонд:</b> 8<br>         <b>Заполняемость:</b><br>         — Сб 28.03: 37.5%<br>         — Вс 29.03: 37.5%<br>         — Пн 30.03: 37.5%<br>         <b>Средняя:</b> 37.5%     </div>     </div>`)[0];
+                popup_fde57638a73a3dbd632a253fc2c2d1de.setContent(html_0078651b7440b358a1c8461304935831);
+            
+        
+
+        circle_marker_a35a24e2aa80a3e35a6bcd25a03307df.bindPopup(popup_fde57638a73a3dbd632a253fc2c2d1de)
+        ;
+
+        
+    
+    
+            circle_marker_a35a24e2aa80a3e35a6bcd25a03307df.bindTooltip(
+                `<div>
+                     Loft&Home Apartments • 4 600–7 000 ₽/сутки • 37.5%
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var marker_c4be680910b541fab5687d64231e5870 = L.marker(
+                [59.933, 30.3046],
+                {
+}
+            ).addTo(map_aba3e07f006a731513586a92884dda9d);
+        
+    
+            var icon_5e7b2409cc413d7181bb387fcf32a61a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "lightgray",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c5e52dbd780e6179bd6b24c7c80f11bf = L.popup({
+  "maxWidth": 280,
+});
+
+        
+            
+                var html_39bf253583a4221e00b4a0c5af688029 = $(`<div id="html_39bf253583a4221e00b4a0c5af688029" style="width: 100.0%; height: 100.0%;"><b>Предлагаемое помещение</b><br>Почтамтская, 1, Санкт-Петербург<br><br>Отмечено отдельно от выборки отелей.</div>`)[0];
+                popup_c5e52dbd780e6179bd6b24c7c80f11bf.setContent(html_39bf253583a4221e00b4a0c5af688029);
+            
+        
+
+        marker_c4be680910b541fab5687d64231e5870.bindPopup(popup_c5e52dbd780e6179bd6b24c7c80f11bf)
+        ;
+
+        
+    
+    
+            marker_c4be680910b541fab5687d64231e5870.bindTooltip(
+                `<div>
+                     Предлагаемое помещение • Почтамтская, 1, Санкт-Петербург
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c4be680910b541fab5687d64231e5870.setIcon(icon_5e7b2409cc413d7181bb387fcf32a61a);
+            
+</script>
+</html>
